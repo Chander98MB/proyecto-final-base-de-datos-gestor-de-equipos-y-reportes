@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+body {
+  margin: 0;
+  padding-top: 80px; 
+  font-family: 'Nunito', sans-serif;
+  background-color: #f2f6fa;
+  color: #333;
+}
+
+/* Navbar (igual que en index) */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fc1515;
+  padding: 10px 20px;
+  z-index: 1000;
+}
+
+#menu {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#menu li {
+  margin: 0 15px;
+}
+
+#menu li a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+#menu li a:hover {
+  background-color: #13d619;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #1b2f47;
+  margin-top: 20px;
+  font-weight: 700;
+}
+
+/* Tablas */
+table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background-color: #e2ecf6;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+/* Formularios */
+form {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: 'Nunito', sans-serif;
+}
+
+form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background-color: #2979ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #1d5fd1;
+}
+
+/* Botón para acciones (como cerrar reporte o ver PDF) */
+button {
+  padding: 8px 12px;
+  background-color: #5a99d4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #3a7bb5;
+}
+
+.btn-regresar {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2979ff;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  font-family: 'Nunito', sans-serif;
+}
+
+.btn-regresar:hover {
+  background-color: #1d5fd1;
+}
+.filtro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 30px auto;
+  padding: 10px 20px;
+  font-family: 'Nunito', sans-serif;
+}
+
+.filtro-container label {
+  font-weight: 600;
+  margin-right: 5px;
+  color: #2c3e50;
+}
+
+.filtro-container select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'Nunito', sans-serif;
+}
+
+.filtro-container button {
+  padding: 10px 18px;
+  background-color: #2979ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filtro-container button:hover {
+  background-color: #1d5fd1;
+}
+.registro-login-links {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.registro-login-links a {
+  color: #2979ff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+.registro-login-links a:hover {
+  color: #1d5fd1;
+  text-decoration: underline;
+}

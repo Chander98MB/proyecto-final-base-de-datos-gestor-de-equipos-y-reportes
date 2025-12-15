@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar Equipos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="navbar"></div>
+
+
+
+  <h1>Buscar Equipos</h1>
+  <div style="text-align: center; margin: 20px;">
+  <a href="index.html" class="btn-regresar">← Regresar a Inicio</a>
+</div>
+
+ <div class="filtro-container">
+  <label for="tipo">Tipo de equipo:</label>
+  <select id="tipo">
+    <option value="">Todos</option>
+    <option value="Rayos X">Rayos X</option>
+    <option value="Ultrasonido">Ultrasonido</option>
+    <option value="Resonancia Magnética">Resonancia Magnética</option>
+    <option value="Tomógrafo">Tomógrafo</option>
+  </select>
+
+  <label for="estado">Estado:</label>
+  <select id="estado">
+    <option value="">Todos</option>
+    <option value="activo">Activo</option>
+    <option value="dañado">Dañado</option>
+    <option value="en mantenimiento">En Mantenimiento</option>
+  </select>
+
+  <button onclick="buscar()">Buscar</button>
+</div>
+  <div id="resultados"></div>
+ 
+  <script>
+    function buscar() {
+      const tipo = document.getElementById('tipo').value;
+      const estado = document.getElementById('estado').value;
+
+      fetch(`/equipos/buscar?tipo=${tipo}&estado=${estado}`)
+        .then(res => res.json())
+        .then(data => {
+          const div = document.getElementById('resultados');
+          if (data.length === 0) {
+            div.innerHTML = '<p>No se encontraron equipos.</p>';
+            return;
+          }
+
+          let html = '<table><thead><tr><th>Código</th><th>Nombre</th><th>Tipo</th><th>Estado</th></tr></thead><tbody>';
+          data.forEach(eq => {
+            html += `<tr><td>${eq.codigo_interno}</td><td>${eq.nombre_equipo}</td><td>${eq.tipo_equipo}</td><td>${eq.estado}</td></tr>`;
+          });
+          html += '</tbody></table>';
+          div.innerHTML = html;
+        });
+    }
+  </script>
+  <script src="js/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Reporte de Mantenimiento</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    label, select, textarea, input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <script>
+    fetch('/tipo-usuario')
+      .then(res => {
+        if (!res.ok) throw new Error('No autenticado');
+        return res.json();
+      })
+      .then(data => {
+        if (!['admin', 'tecnico'].includes(data.tipo_usuario)) {
+          alert('Acceso solo para técnicos o administradores');
+          window.location.href = '/';
+        }
+      })
+      .catch(() => {
+        alert('Inicia sesión para continuar');
+        window.location.href = '/login.html';
+      });
+  </script>
+
+  <h2 style="text-align:center;">Crear Reporte de Mantenimiento</h2>
+  <div style="text-align: center; margin: 20px;">
+  <a href="index.html" class="btn-regresar">← Regresar a Inicio</a>
+  </div>
+  <form id="form-reporte" action="/mantenimiento/crear" method="POST">
+    <label for="equipo_id">Equipo:</label>
+    <select name="equipo_id" id="equipo_id" required></select>
+
+    <label for="tipo_mantenimiento">Tipo de mantenimiento:</label>
+    <select name="tipo_mantenimiento" required>
+      <option value="preventivo">Preventivo</option>
+      <option value="correctivo">Correctivo</option>
+    </select>
+
+    <label for="descripcion">Descripción del problema:</label>
+    <textarea name="descripcion" rows="5" required></textarea>
+
+    <br>
+    <button type="submit">Guardar Reporte</button>
+  </form>
+
+  <script>
+    fetch('/equipos/listado')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('equipo_id');
+        data.forEach(e => {
+          const option = document.createElement('option');
+          option.value = e.id;
+          option.textContent = `${e.codigo_interno} - ${e.nombre_equipo}`;
+          select.appendChild(option);
+        });
+      });
+  </script>
+  <script src="js/scripts.js"></script>
+</body>
+</html>

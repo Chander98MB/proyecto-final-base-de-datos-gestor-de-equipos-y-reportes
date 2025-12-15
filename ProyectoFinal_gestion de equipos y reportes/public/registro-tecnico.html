@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Técnico</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="navbar"></div>
+
+
+  <h2 style="text-align:center;">Registrar Nuevo Técnico</h2>
+
+
+<form action="/tecnicos/agregar" method="POST">
+  <input type="text" name="nombre_usuario" required>
+  <input type="password" name="password" required>
+  <input type="text" name="especialidad" required>
+  <button type="submit">Registrar Técnico</button>
+</form>
+</body>
+</html>

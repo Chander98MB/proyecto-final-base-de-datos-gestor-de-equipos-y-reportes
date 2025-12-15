@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuarios Registrados</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <script>
+    fetch('/tipo-usuario')
+      .then(res => {
+        if (!res.ok) throw new Error('No autenticado');
+        return res.json();
+      })
+      .then(data => {
+        if (data.tipo_usuario !== 'admin') {
+          alert('Acceso solo para administradores');
+          window.location.href = '/';
+        }
+      })
+      .catch(() => {
+        alert('Inicia sesión para continuar');
+        window.location.href = '/login.html';
+      });
+  </script>
+
+  <h1 style="text-align:center;">Usuarios del Sistema</h1>
+
+  <div style="text-align: center; margin: 20px;">
+    <a href="index.html" class="btn-regresar">← Regresar a Inicio</a>
+  </div>
+
+  <table id="tabla-usuarios">
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Tipo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('/usuarios/listado')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector('#tabla-usuarios tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(usuario => {
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td>${usuario.nombre_usuario}</td>
+            <td>
+              <select id="rol-${usuario.id}">
+                <option value="admin" ${usuario.tipo_usuario === 'admin' ? 'selected' : ''}>Admin</option>
+                <option value="tecnico" ${usuario.tipo_usuario === 'tecnico' ? 'selected' : ''}>Técnico</option>
+                <option value="medico" ${usuario.tipo_usuario === 'medico' ? 'selected' : ''}>Biomédico</option>
+              </select>
+            </td>
+            <td>
+              <button onclick="guardarRol(${usuario.id})">Guardar</button>
+              <button onclick="eliminarUsuario(${usuario.id}, '${usuario.nombre_usuario}')" style="background:red;color:white;">
+                Eliminar
+              </button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      });
+
+    function guardarRol(id) {
+      const rol = document.getElementById(`rol-${id}`).value;
+
+      fetch('/usuarios/cambiar-rol', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, tipo_usuario: rol })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        alert('Rol actualizado correctamente');
+      })
+      .catch(() => alert('Error al actualizar rol'));
+    }
+
+    function eliminarUsuario(id, nombre) {
+      if (!confirm(`¿Seguro que deseas eliminar al usuario "${nombre}"?`)) return;
+
+      fetch('/usuarios/eliminar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        alert('Usuario eliminado correctamente');
+        location.reload();
+      })
+      .catch(() => alert('No se pudo eliminar el usuario'));
+    }
+  </script>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>
+

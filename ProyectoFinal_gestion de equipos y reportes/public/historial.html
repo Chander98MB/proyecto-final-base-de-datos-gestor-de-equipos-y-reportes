@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Mantenimiento</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background: #333;
+      color: white;
+    }
+    #descargar-pdf {
+      text-align: center;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <h2 style="text-align:center;">Historial de Mantenimiento</h2>
+
+  <div style="text-align: center; margin: 20px;">
+    <a href="equipos.html" class="btn-regresar">← Regresar a Equipos</a>
+  </div>
+
+  <h3 id="info-equipo" style="text-align:center;"></h3>
+
+  <div id="resultados"></div>
+
+  <div id="descargar-pdf">
+    <button onclick="descargarHistorialPDF()">📥 Descargar Historial en PDF</button>
+  </div>
+
+  <script>
+    let tipoUsuario = '';
+
+    // Cargar tipo de usuario (para saber si mostrar botón de "Cerrar reporte")
+    fetch('/tipo-usuario')
+      .then(res => res.json())
+      .then(data => { tipoUsuario = data.tipo_usuario; })
+      .catch(() => { tipoUsuario = ''; });
+
+    function getParametroUrl(nombre) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(nombre);
+    }
+
+    function mostrarNombreEquipo(id) {
+      fetch(`/equipos/detalle/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('info-equipo').innerText =
+            `Equipo: ${data.nombre_equipo} (${data.codigo_interno})`;
+        })
+        .catch(() => {
+          document.getElementById('info-equipo').innerText = 'Equipo: (No disponible)';
+        });
+    }
+
+    function cargarHistorial(id) {
+      mostrarNombreEquipo(id);
+
+      fetch(`/mantenimiento/todos/${id}`)
+        .then(res => {
+          if (!res.ok) throw new Error('No se pudo cargar historial');
+          return res.json();
+        })
+        .then(data => {
+          const div = document.getElementById('resultados');
+
+          if (!data || data.length === 0) {
+            div.innerHTML = '<p style="text-align: center;">No hay reportes para este equipo.</p>';
+            document.getElementById('descargar-pdf').style.display = 'none';
+            return;
+          }
+
+          let html = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Técnico</th>
+                  <th>Tipo</th>
+                  <th>Descripción</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          data.forEach(r => {
+            const fecha = r.fecha_reporte ? new Date(r.fecha_reporte).toLocaleString() : '';
+
+            let accion = 'Pendiente';
+
+            if (r.estado_reporte === 'cerrado') {
+              accion = r.archivo_pdf
+                ? `<a href="/uploads/${r.archivo_pdf}" target="_blank">📄 PDF</a>`
+                : 'Cerrado (sin PDF)';
+            } else {
+              if (tipoUsuario === 'tecnico') {
+                accion = `<button onclick="cerrarReporte(${r.id})">Cerrar reporte</button>`;
+              }
+            }
+
+            html += `
+              <tr>
+                <td>${fecha}</td>
+                <td>${r.tecnico || ''}</td>
+                <td>${r.tipo_mantenimiento || ''}</td>
+                <td>${r.descripcion || ''}</td>
+                <td>${r.estado_reporte || ''}</td>
+                <td>${accion}</td>
+              </tr>
+            `;
+          });
+
+          html += `
+              </tbody>
+            </table>
+          `;
+
+          div.innerHTML = html;
+          document.getElementById('descargar-pdf').style.display = 'block';
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('resultados').innerHTML =
+            '<p style="text-align:center; color:red;">Error al cargar historial.</p>';
+          document.getElementById('descargar-pdf').style.display = 'none';
+        });
+    }
+
+    function cerrarReporte(id) {
+      if (!confirm('¿Estás seguro de que deseas cerrar este reporte?')) return;
+
+      fetch(`/mantenimiento/cerrar-reporte/${id}`, { method: 'POST' })
+        .then(res => res.text())
+        .then(msg => {
+          alert(msg);
+          location.reload();
+        })
+        .catch(() => alert('Error al cerrar el reporte'));
+    }
+
+    function descargarHistorialPDF() {
+      const id = getParametroUrl('equipo');
+      if (!id) return alert('No se encontró el ID del equipo');
+      window.open(`/mantenimiento/historial-pdf/${id}`, '_blank');
+    }
+
+    const equipoId = getParametroUrl('equipo');
+    if (equipoId) {
+      cargarHistorial(equipoId);
+    } else {
+      document.getElementById('resultados').innerHTML =
+        '<p style="text-align:center;">No se encontró el equipo.</p>';
+    }
+  </script>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>
+

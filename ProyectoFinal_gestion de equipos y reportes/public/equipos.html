@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Equipos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <h2 style="text-align: center;">Listado de Equipos</h2>
+  <div style="text-align: center; margin: 20px;">
+    <a href="index.html" class="btn-regresar">← Regresar a Inicio</a>
+  </div>
+
+  <table id="tabla-equipos" border="1" style="width: 90%; margin: auto; text-align: center;">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Tipo</th>
+        <th>Estado</th>
+        <th>Acción</th>
+        <th>Historial</th>
+        <th>Eliminar</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let tipoUsuario = '';
+
+    fetch('/tipo-usuario')
+      .then(res => res.json())
+      .then(data => {
+        tipoUsuario = data.tipo_usuario;
+
+        fetch('/equipos/listado')
+          .then(res => res.json())
+          .then(data => {
+            const tbody = document.querySelector('#tabla-equipos tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(equipo => {
+              const fila = document.createElement('tr');
+
+              const botonReportar = (equipo.estado === 'activo' && tipoUsuario === 'medico')
+                ? `<button onclick="reportarDano(${equipo.id})">Reportar daño</button>`
+                : '-';
+
+              const botonEliminar = (tipoUsuario === 'admin')
+                ? `<button onclick="eliminarEquipo(${equipo.id}, '${(equipo.codigo_interno || '').replace(/'/g, "\\'")}')" style="background:red;color:white;">
+                     Eliminar
+                   </button>`
+                : '-';
+
+              fila.innerHTML = `
+                <td>${equipo.codigo_interno}</td>
+                <td>${equipo.nombre_equipo}</td>
+                <td>${equipo.tipo_equipo}</td>
+                <td>${equipo.estado}</td>
+                <td>${botonReportar}</td>
+                <td><button onclick="verHistorial(${equipo.id})">Ver historial</button></td>
+                <td>${botonEliminar}</td>
+              `;
+              tbody.appendChild(fila);
+            });
+          });
+      });
+
+    function reportarDano(id) {
+      fetch(`/equipos/reportar-dano/${id}`, { method: 'POST' })
+        .then(() => location.reload());
+    }
+
+    function verHistorial(id) {
+      window.location.href = `historial.html?equipo=${id}`;
+    }
+
+    function eliminarEquipo(id, codigo) {
+      if (!confirm(`¿Seguro que deseas eliminar el equipo ${codigo}?`)) return;
+
+      fetch('/equipos/eliminar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      })
+      .then(async (res) => {
+        const msg = await res.text();
+
+        if (res.status === 409) {
+          alert(msg); // tiene reportes
+          return;
+        }
+        if (!res.ok) throw new Error(msg);
+
+        alert(msg || 'Equipo eliminado correctamente');
+        location.reload();
+      })
+      .catch(() => alert('No se pudo eliminar el equipo'));
+    }
+  </script>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>
+

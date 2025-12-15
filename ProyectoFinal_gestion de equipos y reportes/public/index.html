@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Página Principal</title>
+  <link rel="stylesheet" href="style-index.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="banner"></div>
+
+  <h1>Sistema de gestión de equipos biomedicos y personal intrahospitalario</h1>
+  <h2>La gestion de equipo y personal hospitalario es la base del exito operativo en el sector salud</h2>
+  
+  <div class="form-container">
+   <div class="form-card">
+    <h2>Registrar Nuevo Equipo</h2>
+    <form id="form-equipo" method="POST" action="/equipos/agregar">
+      <label for="nombre_equipo">Nombre del Equipo:</label>
+      <input type="text" name="nombre_equipo" required>
+
+      <label for="tipo_equipo">Tipo de Equipo:</label>
+      <input type="text" name="tipo_equipo" required>
+
+      <label for="estado">Estado:</label>
+      <select name="estado" required>
+        <option value="activo">Activo</option>
+        <option value="dañado">Dañado</option>
+        <option value="en mantenimiento">En mantenimiento</option>
+      </select>
+
+      <br><br>
+      <button id="btn-guardar-equipo" type="submit">Guardar Equipo</button>
+    </form>
+  </div>
+
+  <!-- Formulario para agregar Biomédico -->
+  
+   <div class="form-card">
+    <h2>Registrar Biomédico</h2>
+    <form action="/medicos/agregar" method="POST">
+  <label>Nombre de usuario:</label>
+  <input type="text" name="nombre_usuario" required>
+
+  <label>Contraseña:</label>
+  <input type="password" name="password" required>
+
+  <label>Especialidad:</label>
+  <input type="text" name="especialidad" required>
+
+  <button type="submit">Registrar Biomédico</button>
+</form>
+
+  </div>
+
+  <!-- Formulario para agregar Técnico -->
+   <div class="form-card">
+    <h2>Registrar Técnico</h2>
+   <form action="/tecnicos/agregar" method="POST">
+  <label>Nombre de usuario:</label>
+  <input type="text" name="nombre_usuario" required>
+
+  <label>Contraseña:</label>
+  <input type="password" name="password" required>
+
+  <label>Área de Especialización:</label>
+  <input type="text" name="especialidad" required>
+
+  <button type="submit">Registrar Técnico</button>
+</form>
+  </div>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>
+
