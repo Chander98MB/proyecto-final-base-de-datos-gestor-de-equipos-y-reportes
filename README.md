@@ -1,0 +1,1 @@
+# proyecto-final-base-de-datos-gestor-de-equipos-y-reportes
